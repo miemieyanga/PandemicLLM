@@ -1,0 +1,60 @@
+# @package _global_
+
+
+task_description_type: without_explain
+data_file: processed_v5_4.pkl
+
+data:
+  name: Covid # To be overwritten by dataset specific values.
+  alias: Covid
+  raw_data_file: data/${data_file}
+  split: random
+  #  split: by_time
+  text:
+    mode: label_name # How to generate text for each node?
+  task_type: ${task_description_type}
+  task_file: ${data_file}
+  task_description: ${.${task_description_type}}
+  with_explain: >-
+    You are an assistant that forecasts ${target_description} for a state based on the information below: The trend is represented by bins SUBSTANTIAL INCREASING means hospitalization rising more than 20%, MODERATE INCREASING means hospitalization rising between 10% and 20%, STABLE means hospitalization varying less than 10%, MODERATE DECREASING means hospitalization dropping between 10% to 20%, SUBSTANTIAL DECREASING means hospitalization dropping more than 20%. 
+  without_explain: >-
+    You are an assistant that forecasts ${target_description} for a state based on the information below: 
+  label_description: '' # To be initialized afterward
+  label_text: name
+
+  # * meta_info:
+  n_labels: 5
+
+  # Others
+  max_train_samples: 99999
+  max_val_samples: 99999
+  max_test_samples: 99999
+
+  # ! Visible Columns in DataFrame
+  static_cols:
+    [ 'state_name',
+      'Population', 'under_20', 'over_65',
+      'White', 'Black', # 'Multiple_race', 'Not_Hispanic', 'Hispanic',
+      'medicaid_coverage', 'medicare_coverage', 'uninsured_percent',
+      'medicaid_spending', 'private_health_insurance_spending',
+      'medicare_spending_by_residence', 'health_care_spending',
+      'healthcare_utilization', 'poor_health_status', 'adults_at_high_risk',
+      'poverty_rate', 'social_vulnerability_index',
+      'Healthcare Access and Quality Index', 'Older_at_high_risk',
+      'dem_percent', 'rep_percent',# 'other_percent'
+    ]
+  dynamic_cols: [
+    'hospitalization_per_100k',  # Current Risk
+    # 'hospitalization_per_100k_sm',
+    'Abs_Change',
+    # 'Abs_Trend',
+    # 'reported_cases_per_100k',
+    # 'Dose1_Pop_Pct',
+    # 'Series_Complete_Pop_Pct',
+    # 'Additional_Doses_Vax_Pct',
+  ]
+  label_cols: [
+    'Risk_level', 'Risk_level_1w',
+    'Risk_level_2w', 'Risk_level_3w', 'Risk_level_4w', 'Trend', 'Trend_1w',
+    'Trend_2w', 'Trend_3w', 'Trend_4w',
+  ]

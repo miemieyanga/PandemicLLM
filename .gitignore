@@ -1,0 +1,12 @@
+/output
+/temp
+/sweep
+**/__pycache__
+test.ipynb
+env.yaml
+nohup.out
+/wandb
+*.prof
+/src/notebooks/*
+/bak
+/example

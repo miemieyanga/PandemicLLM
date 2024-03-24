@@ -1,0 +1,74 @@
+# @package _global_
+# Shared Prompt Settings for ALL PROMPTS
+
+# @ Few-shot Demonstration
+human_prompt: base
+gpt_prompt: base
+instruct_prompt: base
+demo_prompt: base
+demo_qa_prompt: base
+question_prompt: icl
+prompt:
+  style: xml
+  human:
+    _target_: graph_text.prompts.Prompt
+    template: ${prompt_templates.human[${human_prompt}]}
+    instruction: ${prompt_templates.instruction[${instruct_prompt}]}
+  demo: #
+    _target_: graph_text.prompts.Prompt
+    template: ${prompt_templates.demo[${demo_prompt}]}
+  demo_qa: #
+    _target_: graph_text.prompts.Prompt
+    template: ${prompt_templates.demo_qa.${demo_qa_prompt}.${..style}}
+  question: #
+    _target_: graph_text.prompts.Prompt
+    template: ${prompt_templates.question[${question_prompt}]}
+  gpt: # @ for SFT target
+    _target_: graph_text.prompts.Prompt
+    template: ${prompt_templates.gpt[${gpt_prompt}]}
+
+_target_description_lookup:
+  r1: risk of hospitalization for the next week
+  r2: risk of hospitalization for the two weeks later
+  r3: risk of hospitalization for the three weeks later
+  r4: risk of hospitalization for the four weeks later
+  t1: trend of hospitalization for the next week
+  t2: trend of hospitalization for the two weeks later
+  t3: trend of hospitalization for the three weeks later
+  t4: trend of hospitalization for the four weeks later
+  t_seq: none
+target_description: ${_target_description_lookup.${target}}
+prompt_templates:
+  human:
+    # @ human
+    base: >- # Base template for human input
+      {instruction}{demo}{question}
+    # @
+  instruction:
+    # @ Text classification prompt
+    na: ''
+    # Role + Task Description + Instructions
+    sft: >-
+      ${data.task_description}\n
+    base: >- # Cora
+      ${data.task_description}\n
+
+  demo:
+    na: ''
+    base: >-
+      \nHere are a few examples:\n
+      {demonstration}\n\n
+      Now let's answer the question below:\n
+  demo_qa:
+    base:
+      xml: >-
+        {info}\n<question>What's the topic of academic paper given the information above?</question>\n<answer>{answer}</answer>
+      json: >-
+        {info}\n<question>What's the topic of academic paper?${data.label_description}</question>\n
+        <answer>{answer}</answer>
+  question:
+    sft: >-
+      \n{info}\n\nNow, predict the ${target_description} from the available options: ${data.label_description}.
+  gpt:
+    base: >- # Researcher Arxiv
+      The answer is: {answer}.

@@ -1,0 +1,184 @@
+# @package _global_
+model:
+  name: CovidLLM
+
+# @ CovidLLM Settings
+llm_base_model: llama2-7b
+in_weeks: 3
+target: t1
+# target: t_seq
+tree_node_alias:
+  x: feature
+splits_type: 'base_splits' # base_splits, sta_aug_splits, dy_aug_splits, sta_dy_aug_splits
+#encoder: RNN
+#encoder: LSTM
+use_seq_encoder: true
+encoder_type: GRU
+bi_encoder: false
+encoder:
+  _target_: torch.nn.${encoder_type}
+  input_size: 1
+  hidden_size: ${llm.hidden_dim}
+  num_layers: 2
+  dropout: ${dropout}
+  batch_first: true
+  bidirectional: ${bi_encoder}
+  
+cont_fields: all
+_cont_fields_lookup:
+  all: [ 'Abs_Change', 'hospitalization_per_100k', 'hospitalization_per_100k_sm', 'reported_cases_per_100k', #关键信息都是前两个
+         'Dose1_Pop_Pct', 'Series_Complete_Pop_Pct', 'Additional_Doses_Vax_Pct' ]
+  change_only: [ 'Abs_Change']
+  hos_only: [ 'hospitalization_per_100k']
+  change_hos: ['Abs_Change', 'hospitalization_per_100k']
+  infection: [ 'hospitalization_per_100k', 'reported_cases_per_100k' ]
+  vaccine: [ 'Dose1_Pop_Pct', 'Series_Complete_Pop_Pct', 'Additional_Doses_Vax_Pct' ]
+in_cont_fields: ${_cont_fields_lookup.${cont_fields}}
+
+# @ Demo for In-Context-Learning
+use_static_text: true
+use_dynamic_text: true
+use_trends: false
+use_cont_fields: true
+test_without_variant: true
+training_variant_prompt: true
+
+use_demo: true
+demo:
+  #  select_method: first # Fixed seed examples for every sample
+  select_method: max_degree # Fixed seed examples for every sample
+  template: '{prompt_tree_info}The answer is {label}.'
+  #  select: class-prototype # Select center of each class cluster
+  #  select: BM25 # Use BM25 for dynamic retrieval
+  #  select: BM25 # Randomly select seed examples
+  keep_label_description: False
+  n_separators: 2 # Number of separators between examples
+  n_samples: ${data.n_labels} # Number of demonstrations
+
+
+# @ Agent settings
+agent_name: DeepSpeedAgent
+local_rank: 0
+save_model: false
+save_path: ${out_dir}checkpoints/
+
+# @ Text Settings
+add_pre_instruction: true
+pre_instruction_template: short
+#remove_quotation: true
+remove_quotation: true
+
+# @ LLM
+# LoRA
+lora:
+  r: -1 # LoRA will be turned off if r<0
+
+  alpha: ${.r}
+  dropout: 0.1
+  target_modules: [ q_proj, v_proj, k_proj, o_proj ]
+#  modules_to_save: [ embed_tokens, lm_head ]
+
+# @ EVALUATE
+metrics: [ 'acc' , 'mse', 'wmse', 'bs']
+eval_embeds_path: null
+eval_sets: ['val' , 'test' ]
+#eval_sets: [ 'train']
+choice_readout_pos: 0
+min_eval_step: 10
+log_path: null
+exp_name: null
+max_tgt_len: 2048 # the maximum sequence length to be generated
+max_gen_len: 5 # the maximum sequence length to be generated
+stage: 2
+eval_freq: 30
+save_freq: 30000
+max_epochs: 9999
+total_steps: 700 #Number of train steps
+use_embeds: true
+frozen_encoder: false
+frozen_llm: true
+#frozen_encoder: true
+#conv_template: covid_llm_v1
+conv_template: no_conv
+save_file: ${out_dir}${alias}.csv
+mode: train
+log_freq: 500
+ds_config_path: configs/dsconfig/openllama_peft_stage_${stage}.json
+use_flash_attn: false
+# @ Text2Text fields: Upper
+
+dropout: 0.2
+eval_choice_only: ${add_class_token}
+# alias: ${llm.name}-Split${data.split}-${data.alias}-${target}
+
+#
+add_class_token: true
+add_label_name_output: true
+add_info_token: true
+add_pad_token: true
+#
+eval_metric: val_acc
+
+# ! Deepspeed related
+use_deepspeed: false # For debug only
+eq_batch_size: 4
+inf_batch_size: ${oc.select:model._meta_data.inf_bsz,12}
+max_bsz_per_gpu: ${oc.select:llm._meta_data.max_bsz_per_gpu,12}
+bsz_per_gpu: ${get_bsz_per_gpu:${eq_batch_size}, ${max_bsz_per_gpu}}
+grad_acc_steps: ${get_grad_acc_steps:${eq_batch_size}, ${max_bsz_per_gpu}}
+
+# ! Float
+use_fp16: true
+use_bf16: true
+optimizer_type: AdamW
+use_int4: false
+
+# ! Optimizer
+warmup_rate: 0.1
+lr: 2e-5
+
+ds: # Deepspeed config
+  train_batch_size: ${eq_batch_size}
+  train_micro_batch_size_per_gpu: ${bsz_per_gpu}
+  gradient_accumulation_steps: ${grad_acc_steps} # ! To be overwritten
+  steps_per_print: 2000
+  gradient_clipping: 1.0
+  zero_optimization:
+    stage: 2 # ??? # Original 2
+    offload_optimizer:
+      device: cpu
+    contiguous_gradients: true
+    allgather_bucket_size: 500000000
+    allgather_partitions: true
+
+  fp16:
+    enabled: ${use_fp16}
+    opt_level: O2
+    min_loss_scale: 1
+
+  bf16:
+    enable: ${use_bf16}
+
+  optimizer:
+    type: ${optimizer_type}
+    params:
+      lr: ${lr}
+      betas: [ 0.9, 0.95 ]
+      eps: 1e-8
+      weight_decay: 0.001
+
+  scheduler:
+    type: WarmupDecayLR
+    params:
+      warmup_min_lr: 0
+      warmup_max_lr: ${lr}
+      warmup_num_steps: ${round_mult:${total_steps}, ${warmup_rate}}
+      total_num_steps: ${total_steps}
+
+  activation_checkpointing:
+    partition_activations: true
+    cpu_checkpointing: true
+    contiguous_memory_optimization: false
+    number_checkpoints: null
+    synchronize_checkpoint_boundary: false
+    profile: false

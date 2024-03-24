@@ -1,0 +1,16 @@
+# @package _global_
+
+
+mode: sft
+eval_freq: 50
+data:
+  max_eval_samples: 999999
+use_demo: false
+wandb_proj: CovidLLM-SFT
+
+human_prompt: base
+gpt_prompt: base
+instruct_prompt: sft
+demo_prompt: base
+demo_qa_prompt: base
+question_prompt: sft
