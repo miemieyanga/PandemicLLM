@@ -2,9 +2,10 @@
 
 # PandemicLLM: Adapting Large Language Models to Forecast Pandemics in Real-time: A COVID-19 Case Study
 
-Hongru Du\*, Jianan Zhao\*, Yang Zhao\*, Shaochong Xu, Xihong Lin, Lauren M. Gardner, Yiran Chen, and Hao (Frank) Yang. 
+Hongru Du\*, Jianan Zhao\*, Yang Zhao\*, Shaochong Xu, Xihong Lin, Lauren M. Gardner\#, Yiran Chen\#, and Hao (Frank) Yang\#. 
 
 \* *Equal Contribution*
+\# *Corresponding Authors*
 
 </div>
 
