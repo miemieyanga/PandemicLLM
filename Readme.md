@@ -104,3 +104,8 @@ data = pickle.load(open(path, 'rb'))
 `base_splits`, `sta_aug_splits`, `dy_aug_splits`, `sta_dy_aug_splits`: indexes for `sta_dy_aug_data`, representing for raw data, data with static augmentation, data with dynamic augmentation, and data with static and dynamic augmentation respectively. 
 
 `label_info`, `mse_val_map`: information used for training
+
+
+### Credits
+
+This work is supported by NSF Award ID 2229996 and computational resources at NSF AI Institute for Edge Computing Leveraging Next Generation Networks (Athena), Duke University. 
