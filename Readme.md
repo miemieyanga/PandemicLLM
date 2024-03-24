@@ -23,7 +23,7 @@ conda create -n PLLM python=3.10
 source activate PLLM
 ```
 
-Install related packages. 
+Install the related packages. 
 ```shell
 pip install -r requirements.txt
 conda install mpi4py
@@ -41,9 +41,6 @@ echo "
 env:
   vars:
     WANDB_API_KEY: YOUR_WANDB_API_KEY
-    wandb_dir: YOUR_wandb_dir
-    wandb_proj: YOUR_wandb_proj
-    wandb_entity: YOUR_wandb_entity
     HF_ACCESS_TOKEN: YOUR_HF_ACCESS_TOKEN
 " >> configs/user/env.yaml
 ```
@@ -88,7 +85,7 @@ python run_covid_llm_sft.py data_file=processed_v5_4.pkl data_file=processed_v5_
 
 ## Dataset 
 
-### Open the dataset
+### Load the Dataset
 
 
 ```
