@@ -1,7 +1,0 @@
-# @package _global_
-defaults:
-  - override /llm: chatgpt # Disable Hydra logging
-mode: icl
-data:
-  max_eval_samples: 999999
-wandb_proj: CovidLLM-ICL-Debug
