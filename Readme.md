@@ -85,6 +85,8 @@ python run_covid_llm_sft.py data_file=processed_v5_4.pkl data_file=processed_v5_
 
 ## Dataset 
 
+PandemicLLM is fine-tuned using multiple disparate categories of data including spatial, epidemiological time series, genomic surveillance, and public health policy data. Our data covers all 50 states in the United States, ensuring a comprehensive nationwide scope for our study. All the spatial data are available at the state resolution, while all the time-varying data are available at the weekly resolution. 
+
 ### Load the Dataset
 
 
