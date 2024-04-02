@@ -108,4 +108,4 @@ data = pickle.load(open(path, 'rb'))
 
 ### Credits
 
-This work is supported by NSF Award ID 2229996 and computational resources at NSF AI Institute for Edge Computing Leveraging Next Generation Networks (Athena), Duke University. 
+This work is supported by NSF Award ID 2229996, NSF Award ID 2112562 and ARO W911NF-23-2-0224.
