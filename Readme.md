@@ -46,42 +46,43 @@ env:
 ```
 
 ## Supervised  Fine-tuning (SFT)
-CovidLLM supports instruction fine-tuning a LLM on graph. An RNN is used to map the continuous sequence to text space (as tokens). We recommend to use BF16 for stable training. To reproduce our results, you should run the following scripts under the same environment we listed above:
-### PandemicLLM-7B 1-week
+PandemicLLM supports instruction fine-tuning a LLM on graph. An RNN is used to map the continuous sequence to text space (as tokens). We recommend to use BF16 for stable training. To reproduce our results, you should run the following scripts under the same environment we listed above:
+
+### PandemicLLM-1 1-week
 ```shell
 cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-7b lr=2e-05 save_model=False seed=2024 splits_type=base_splits target=t1 total_steps=1501 use_cont_fields=True use_deepspeed=True use_wandb=True
-```
-### PandemicLLM-7B 3-week
-```shell
-cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-7b lr=2e-05 save_model=False seed=2024 splits_type=sta_aug_splits target=t3 total_steps=1501 use_cont_fields=True use_deepspeed=True use_wandb=True
+python run_covid_llm_sft.py data_file=data_v6_after_2021-06-01.pkl llm_base_model=llama2-13b lr=0.0001 save_model=False seed=2024 splits_type=sta_aug_splits target=t1 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
 ```
 
-### PandemicLLM-13B 1-week
+### PandemicLLM-1 3-week
 ```shell
 cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-13b lr=1e-05 save_model=False seed=2023 splits_type=sta_aug_splits target=t1 total_steps=1501 use_cont_fields=True use_deepspeed=True use_wandb=True
+python run_covid_llm_sft.py data_file=data_v6_after_2021-06-01.pkl llm_base_model=llama2-13b lr=0.0001 save_model=False seed=2024 splits_type=sta_aug_splits target=t3 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
 ```
 
-### PandemicLLM-13B 3-week
+### PandemicLLM-2 1-week
 ```shell
 cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-13b lr=2e-05 save_model=False seed=2023 splits_type=base_splits target=t3 total_steps=1501 use_cont_fields=True use_deepspeed=True use_wandb=True
+python run_covid_llm_sft.py data_file=data_v6_after_2021-12-01.pkl llm_base_model=llama2-13b lr=0.0001 save_model=False seed=2024 splits_type=dy_aug_splits target=t1 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
 ```
 
-### PandemicLLM-70B 1-week
+### PandemicLLM-2 3-week
 ```shell
 cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-70b lr=1e-05 save_model=False seed=2023 splits_type=sta_dy_aug_splits target=t1 total_steps=1501 use_cont_fields=True use_deepspeed=True use_int4=True use_wandb=True
+python run_covid_llm_sft.py data_file=data_v6_after_2021-12-01.pkl llm_base_model=llama2-13b lr=0.0001 save_model=False seed=2024 splits_type=dy_aug_splits target=t3 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
 ```
 
-### PandemicLLM-70B 3-week
+### PandemicLLM-3 1-week
 ```shell
 cd src/scripts
-python run_covid_llm_sft.py data_file=processed_v5_4.pkl data_file=processed_v5_4.pkl eq_batch_size=4 in_weeks=3 llm_base_model=llama2-70b lr=2e-05 save_model=False seed=2023 splits_type=sta_dy_aug_splits target=t3 total_steps=1501 use_cont_fields=True use_deepspeed=True use_int4=True use_wandb=True
+python run_covid_llm_sft.py data_file=processed_v5_4.pkl llm_base_model=llama2-13b lr=1e-05 save_model=False seed=2023 splits_type=sta_aug_splits target=t1 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
 ```
 
+### PandemicLLM-3 3-week
+```shell
+cd src/scripts
+python run_covid_llm_sft.py data_file=processed_v5_4.pkl llm_base_model=llama2-13b lr=2e-05 save_model=False seed=2023 splits_type=base_splits target=t3 total_steps=1501 use_deepspeed=True use_int4=False use_wandb=True
+```
 
 ## Dataset 
 
