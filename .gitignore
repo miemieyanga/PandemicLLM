@@ -12,3 +12,5 @@ nohup.out
 /example
 /sbatch/*
 /logs/*
+/jupyter/*
+/src/jupyter/*
