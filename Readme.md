@@ -19,15 +19,10 @@ We conduct experiments under CUDA 12.1 and Ubuntu 22.04 on Nvidia A100 GPU.
 Create conda environment
 
 ```shell
-conda create -n PLLM python=3.10
+conda env create -f env.yml
 source activate PLLM
 ```
 
-Install the related packages. 
-```shell
-pip install -r requirements.txt
-conda install mpi4py
-```
 ## Set up Environment Variables
 
 We recommend to use [wandb](https://wandb.ai/) to monitor and manage the training process. Before runing the training script, make sure to set up the wandb environment properly. **You can also skip wandb by setting the `use_wandb=False`**. 

@@ -24,7 +24,7 @@ path:
   data_storage: data/
   temp: temp/ # Removable
   out_dir: output/ #
-  hf_local: ../CovidLLM/output/
+  hf_local: /scratch4/haofrankyang/yang/hf/
 
 working_dir: ${path.temp}working_dir/${.uid}/ # For deletable temporary files.
 out_dir: ${path.out_dir}${oc.select:wandb.sweep_id,local}/${model.name}/${.uid}-${.alias}/ # For files to be saved, to be initialized
